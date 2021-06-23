@@ -1,0 +1,21 @@
+---
+- name: Checking Service
+hosts: all
+become: true
+tasks:
+- shell: ps -ef | grep nginx | grep -v grep |wc -l
+register: result
+- set_fact:
+result: "{{ result.stdout }}"
+- debug:
+msg: "The process is not running"
+- debug:
+msg: "{{ result }}"
+- name: Restart nginx process
+service:
+name: nginx
+state: restarted
+when: result == "0"
+retries: 3
+delay: 10
+until: result11 > "0"
